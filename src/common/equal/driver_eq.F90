@@ -37,10 +37,9 @@ use globalvars, ONLY : correct,label
 use mod_init  !for init (uinf, ra,rb,rc),setdens,
 !use mod_geom  !for setgrid
 implicit none
-integer m1,n1,m2,n2,icorrect,ipb
+integer n0,icorrect,ipb
 
-read*,m1,n1;  !print*,'gridsize n=',n0
-read*,m2,n2;  !print*,'gridsize n=',n0
+read*,n0;  !print*,'gridsize n=',n0
 read*,icorrect
 read*,ipb
 correct=.false.; label='orig_'
@@ -48,7 +47,7 @@ if (icorrect.eq.1) then
    correct=.true.; label='corr_'
 endif
 
-call init(m1,n1,m2,n2)       !initializes: uinf
+call init(n0)       !initializes: uinf
                     !ra,rb,rc,axmax (ellipse only)
                     !grids g(1),g(2)
                     !density of grids
@@ -154,10 +153,9 @@ xfar =10
 !print*,u(0,:)
 
 !do l=0,11
-do l=0,0
-!do l=11,11
+!do l=0,0
+do l=2,2
   d=0.2d0/2**l
-d=1.6d0
   i2 = mod(l,10)
   i1 = (l - i2)/10
   write(dlab,'(a,2i1,a)')'d',i1,i2

@@ -6,11 +6,11 @@ implicit none
 real*8, parameter :: pi= 3.14159265358979324d0,pi2=2*pi,pi4=4*pi,pi8=8*pi
 
 ! max gridsizes
-integer, parameter :: mgrid=350, ngrid=1300, nwinmax=1*60 ! had>2*nwin!!! why? use >nwin
-integer, parameter :: nleft=-nwinmax, nright=ngrid+nwinmax
+integer, parameter :: ngrid=800, nwinmax=2*150  ! at least 2*nwin!!!!
+integer, parameter :: mgrid=ngrid/2, nleft=-nwinmax, nright=ngrid+nwinmax
 
 ! max number of target points
-integer, parameter :: nvecmax=6000  !for 75^2 =5625 grid
+integer, parameter :: nvecmax=60000  !for 75^2 =5625 grid
 !integer, parameter :: nvecmax=105000  !for 75^2 =5625 grid
 
 ! FOR CORRECTIONS:

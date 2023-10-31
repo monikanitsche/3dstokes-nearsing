@@ -7,11 +7,11 @@ MODULE mod_init
 
 CONTAINS
 
-SUBROUTINE init(m1,n1,m2,n2)
+SUBROUTINE init(n0)
 use globalvars, ONLY: uinf,ra,rb,rc,axmax
 use mod_geom !for setgrid
 implicit none
-integer, INTENT(IN) :: m1,n1,m2,n2
+integer :: n0
 !LOCAL
 integer :: i2,i3
 character(len=34) :: flin
@@ -23,12 +23,11 @@ ra=3; rb=2; rc=1; uinf=(/ 1, 0, 0 /); axmax=3; !use with f1=1
 !ra=1; rb=2; rc=3; uinf=(/ 1, 0, 0 /); axmax=3; !use with f3=1
 !ra=2; rb=1; rc=3; uinf=(/ 1, 0, 0 /); axmax=3; !use with f3=1
 
-call setgrid(m1,n1,m2,n2)  ! requires ra,rb,rc
+call setgrid(n0)  ! requires ra,rb,rc
 
-!NEED DATA ON MODIFIED GRIDS!!
-!flin = 'data/ellipse-data-321-uinf100-n000'
-!i2=mod(n0/10,10); i3=mod((n0-i2*10)/100,10)
-!write(flin(32:33),'(2i1)')i3,i2
+flin = 'data/ellipse-data-321-uinf100-n000'
+i2=mod(n0/10,10); i3=mod((n0-i2*10)/100,10)
+write(flin(32:33),'(2i1)')i3,i2
 !print*,flin
 !call setdens(flin)  !flow past sphere
 call setdens2  !f=1,0,0

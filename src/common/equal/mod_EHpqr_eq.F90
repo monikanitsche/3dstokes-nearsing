@@ -104,7 +104,7 @@ SUBROUTINE compallcorrtrap(t,g,calf,cbet,calfbet,corr,jind)
 !ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 use params, ONLY : nbmax,rmax,pmax,nwinmax
 use types
-!use old
+use old
 implicit none
 TYPE (basept), INTENT(IN) :: t
 TYPE (grid),       INTENT(IN) :: g
@@ -117,7 +117,7 @@ integer, dimension(nbmax) :: r,p,q
 real*8, dimension(nbmax) :: trap,inth,fact,F1,F2,F3,F4,term, F11, &
             dfu1,dfu2,dfuuu1,dfuuu2,dfv1,dfv2,dfvvv1,dfvvv2,dfuv1,dfuv2,dfuv3,dfuv4, &
             xjunk1,xjunk2,xjunk3,xjunk4
-real*8 :: cu,cv,delu,delv,aa,bb,cc,dd,cu3,cv3,cuv,hx,hy,hxhy,weight,uu,vv,c
+real*8 :: cu,cv,delu,delv,aa,bb,cc,dd,cu3,cv3,cuv,h,h3,h4,h5,weight,uu,vv,c
 real*8, dimension(0:nwinmax) :: wtalf,wtbet
 
 !print*
@@ -146,18 +146,30 @@ do j=m1,m2
   call trapcomponents(g%alf(i)-t%alfb,g%bet(j)-t%betb,cu,cv,c,nb,r,p,q,trap,weight)
 enddo
 enddo
-delu=g%hx*cu
-delv=g%hy*cv
+delu=g%h*cu
+delv=g%h*cv
 trap(1:nb)=trap(1:nb)*delu*delv
 
+!print*,t%alfb,g%alf(n1),cu
 aa=(g%alf(n1)-t%alfb)*cu
 bb=(g%alf(n2)-t%alfb)*cu
 cc=(g%bet(m1)-t%betb)*cv
 dd=(g%bet(m2)-t%betb)*cv
 
-hx=g%hx
-hy=g%hy
-hxhy=hx*hy
+!print*,t%x0
+!print*,t%alfb
+!print*,t%betb
+!print*,g%bet(m1) 
+!print*,t%betb
+!print*,g%bet(m2)
+
+!print*,aa,bb,cc,dd,c
+!stop
+
+h=g%h
+h3=h**3
+h4=h3*h
+h5=h4*h
 cu3=cu**3
 cv3=cv**3
 cuv=cu*cv
@@ -171,7 +183,7 @@ do j=m1,m2
   call allder_c(aa,vv,c,dfu1,dfuuu1,xjunk1,xjunk2,xjunk3,jind)
   call allder_c(bb,vv,c,dfu2,dfuuu2,xjunk1,xjunk2,xjunk3,jind)
 
-  term=term + (-hxhy*hx/12*cu*(dfu2-dfu1) + hxhy*hx**3/720*cu3*(dfuuu2-dfuuu1))*wtbet(j-m1)
+  term=term + (-h3/12*cu*(dfu2-dfu1) + h5/720*cu3*(dfuuu2-dfuuu1))*wtbet(j-m1)
 !  term=term + (-h3/12*cu*(dfu2-dfu1) )*wtbet(j-m1)
 enddo
 do i=n1,n2
@@ -181,7 +193,7 @@ do i=n1,n2
 
   call allder_c(uu,cc,c,xjunk1,xjunk2,dfv1,dfvvv1,xjunk3,jind)
   call allder_c(uu,dd,c,xjunk1,xjunk2,dfv2,dfvvv2,xjunk3,jind)
-  term=term + (-hxhy*hy/12*cv*(dfv2-dfv1) + hxhy*hy**3/720*cv3*(dfvvv2-dfvvv1))*wtalf(i-n1)
+  term=term + (-h3/12*cv*(dfv2-dfv1) + h5/720*cv3*(dfvvv2-dfvvv1))*wtalf(i-n1)
 !  term=term + (-h3/12*cv*(dfv2-dfv1) )*wtalf(i-n1)
 enddo
 !call allder(aa,cc,xjunk1,xjunk2,xjunk3,xjunk4,dfuv1,jind)
@@ -193,7 +205,7 @@ call allder_c(aa,cc,c,xjunk1,xjunk2,xjunk3,xjunk4,dfuv1,jind)
 call allder_c(bb,cc,c,xjunk1,xjunk2,xjunk3,xjunk4,dfuv2,jind)
 call allder_c(aa,dd,c,xjunk1,xjunk2,xjunk3,xjunk4,dfuv3,jind)
 call allder_c(bb,dd,c,xjunk1,xjunk2,xjunk3,xjunk4,dfuv4,jind)
-term=term + hxhy**2/12**2*cuv*(dfuv4-dfuv2-dfuv3+dfuv1)
+term=term + h4/12**2*cuv*(dfuv4-dfuv2-dfuv3+dfuv1)
 
 !call allFs(aa,cc,F1,jind)
 !call allFs(bb,cc,F2,jind)
@@ -208,6 +220,7 @@ do j=1,nb
    corr(j)= fact(j)*( (inth(j)-trap(j))/cuv  - term(j) )  
 !print*,j,corr(j),inth(j),trap(j),inth(j)-trap(j),term(j)*cuv ! ALL GOOD!!
 enddo
+!j=22
 !print*,aa,bb,cc,dd
 !print*,j,corr(j),inth(j),trap(j),inth(j)-trap(j),term(j)*cuv ! ALL GOOD!!
 !print*,p(j),q(j),(r(j)-1)/2

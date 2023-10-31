@@ -4,7 +4,7 @@ implicit none
 
   TYPE :: grid
     integer :: n,m,noff
-    real*8 :: hx,hy
+    real*8 :: h
     real*8,dimension(nleft:nright,0:mgrid) :: &
            x,y,z,f1,f2,f3, xnj,ynj,znj,jac
     real*8,dimension(nleft:nright,0:mgrid,1:9) :: f1der,f2der,f3der

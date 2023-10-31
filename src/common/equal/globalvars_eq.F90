@@ -12,7 +12,7 @@ real*8, dimension(3) :: uinf
 
 TYPE(grid) :: g(2)
 
-real*8 :: tmax,delt,time,xfar,hx1,hy1,hx2,hy2
+real*8 :: tmax,delt,time,xfar,h
 
 real*8 :: calf,cbet,calfbet
 real*8,dimension(0:cmax,0:cmax) :: cx,cy,cz,cj,e,cnjac1,cnjac2,cnjac3

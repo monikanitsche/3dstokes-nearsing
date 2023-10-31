@@ -10,57 +10,47 @@ PUBLIC
 
 CONTAINS
 
-SUBROUTINE setgrid(m1,n1,m2,n2)
+SUBROUTINE setgrid(n0)
    !cccccccccccccccccccc
    ! sets grid of gauss points, assume delalf=delbet=h
    !cccccccccccccccccccc
    use params, only: pi,pi2,nwinmax
-   use globalvars, ONLY : g,ra,rb,rc,hx1,hy1,hx2,hy2
+   use globalvars, ONLY : g,h,ra,rb,rc
    implicit none
-   integer, INTENT(IN) :: m1,n1,m2,n2
+   integer, INTENT(IN) :: n0
    ! LOCAL
-   integer :: i,j,l,noff
+   integer :: i,j,l,n,m,noff
    real*8 :: alfa,beta,abc,cosbet,abccosbet,xx,yy,zz
 
-!   n=n0; m=n/2; noff=nwinmax; h=pi2/n;
-   noff=nwinmax; 
-   hx1=pi2/n1; hx2=pi2/n2
-   hy1= pi/m1; hy2= pi/m2
-
-   g(1)%n=n1; g(2)%n=n2
-   g(1)%m=m1; g(2)%m=m2
+   n=n0; m=n/2; noff=nwinmax; h=pi2/n;
    do l=1,2
-     g(l)%hx = pi2/g(l)%n
-     g(l)%hy =  pi/g(l)%m
+     g(l)%n=n
+     g(l)%m=m
+     g(l)%h = h
      g(l)%noff = noff
-     do i=-noff,g(l)%n+noff
-       g(l)%alf(i)=-pi+g(l)%hx*i
+     do i=-noff,n+noff
+       g(l)%alf(i)=-pi+h*i
      enddo
      do j=0,g(l)%m
-       g(l)%bet(j)=-pi/2+g(l)%hy*j
+       g(l)%bet(j)=-pi/2+h*j
      enddo
    enddo
 
-   do i=-noff,n1+noff
-     do j=0,m1
-       alfa=g(1)%alf(i)
-       beta=g(1)%bet(j)
+   do i=-noff,n+noff
+   do j=0,m
+     alfa=-pi+h*i
+     beta=-pi/2+h*j
+     g(1)%x(i,j)=ra*cos(alfa)*cos(beta)
+     g(1)%y(i,j)=rb*sin(alfa)*cos(beta)
+     g(1)%z(i,j)=rc*sin(beta)
 
-       g(1)%x(i,j)=ra*cos(alfa)*cos(beta)
-       g(1)%y(i,j)=rb*sin(alfa)*cos(beta)
-       g(1)%z(i,j)=rc*sin(beta)
-     enddo
+     g(2)%x(i,j)=ra*sin(beta)
+     g(2)%y(i,j)=rb*cos(alfa)*cos(beta)
+     g(2)%z(i,j)=rc*sin(alfa)*cos(beta)
    enddo
-  
-   do i=-noff,n2+noff
-     do j=0,m2
-       alfa=g(2)%alf(i)
-       beta=g(2)%bet(j)
-       g(2)%x(i,j)=ra*sin(beta)
-       g(2)%y(i,j)=rb*cos(alfa)*cos(beta)
-       g(2)%z(i,j)=rc*sin(alfa)*cos(beta)
-     enddo
    enddo
+!   print*,g(2)%x(10,15)
+!   print*,g(2)%z(10,15)
 
    ! nJ: needed for double layer
    abc=ra*rb*rc
@@ -117,7 +107,8 @@ do j=0,n
 !print*,slp
 !print*,t%alfb,t%betb,dlp
    endif
-print*,dlp 
+print*,dlp !,t%icorr
+!stop
 enddo
 
 return
@@ -130,17 +121,16 @@ SUBROUTINE setbase(x0,t)
 ! and sets tpt: d,x0,x0b,icorr,roundoff, alfb, betb,i0,j0
 use params, ONLY :pi
 use types, ONLY : basept
-use globalvars, ONLY :ra,rb,rc,axmax,correct,hx1,hy1,hx2,hy2
+use globalvars, ONLY :ra,rb,rc,axmax,correct,h
 implicit none
 real*8, dimension(3), INTENT(IN)  :: x0
 TYPE (basept), INTENT(OUT) :: t
 !LOCAL
-real*8 :: d,alfb,betb,sinalf,sinbet,cosalf,cosbet,xalf,xbet,dels,alf,bet,disttobase,h,hx,hy
+real*8 :: d,alfb,betb,sinalf,sinbet,cosalf,cosbet,xalf,xbet,dels,alf,bet,disttobase
 real*8, dimension(3) :: x0b
 
 t%igrid=2
 t%x0=x0
-hx=hx2; hy=hy2;
 !print*,'in setbase'
 !print*,x0
 call findproj(x0,ra,rb,rc,x0b,d)
@@ -148,10 +138,7 @@ t%x0b=x0b
 !print*,x0b
 !print*,correct
 t%d=d
-if (abs(x0b(3)/rc)<1/sqrt(2.d0)) then
-t%igrid=1
-hx=hx1; hy=hy1;
-endif
+if (abs(x0b(3)/rc)<1/sqrt(2.d0)) t%igrid=1
 
 !print*,'h',h
 !print*,'here',t%igrid,d,6*axmax*h
@@ -163,7 +150,6 @@ t%roundoff=.false.
 !       nearest gridpt (i0,j0) 
 if (correct) then
 !print*,d,6*axmax*h,d-6*axmax*h
-h=max(hx,hy)
 if (d<6*axmax*h) then
   if (t%igrid.eq.1) then
     betb= asin(x0b(3)/rc)
@@ -172,6 +158,7 @@ if (d<6*axmax*h) then
     sinbet=sin(betb); cosbet=cos(betb);
     xalf= sqrt( cosbet**2*( (ra*sinalf)**2 + (rb*cosalf)**2 ) )
     xbet= sqrt( sinbet**2*( (ra*cosalf)**2 + (rb*sinalf)**2 ) + (rc*cosbet)**2)
+    dels=h*max(xalf,xbet)
   else  ! t%igrid=2, from grid 1 to grid 2 :   x->y,  y->z,  z->x
     betb= asin(x0b(1)/ra)
     alfb=atan2(x0b(3)/rc,x0b(2)/rb)
@@ -179,23 +166,25 @@ if (d<6*axmax*h) then
     sinbet=sin(betb); cosbet=cos(betb);
     xalf= sqrt( cosbet**2*( (rb*sinalf)**2 + (rc*cosalf)**2 ) )
     xbet= sqrt( sinbet**2*( (rb*cosalf)**2 + (rc*sinalf)**2 ) + (ra*cosbet)**2)
+    dels=h*max(xalf,xbet)
   endif
-! dels=h*max(xalf,xbet)
-  dels=max(hx*xalf,hy*xbet)
+!print*,alfb
+!print*,betb
 
   t%alfb=alfb
   t%betb=betb
+!print*,dels
 
   !if correction needed set icorr=1
 !  if (t%d<6*dels) t%icorr=1
   if (t%d<6*dels) then 
     t%icorr=1
-    t%i0=nint((t%alfb+pi)/hx); t%j0=nint((t%betb+pi/2)/hy)
+    t%i0=nint((t%alfb+pi)/h); t%j0=nint((t%betb+pi/2)/h)
     !print*,'h',t%alfb,t%i0,h,t%icorr
     !if roundoff correction needed set roundoff=.true.
     if (t%d<dels/4) then
-      alf=-pi+hx*t%i0
-      bet=-pi/2+hy*t%j0
+      alf=-pi+h*t%i0
+      bet=-pi/2+h*t%j0
       disttobase=sqrt((t%alfb-alf)**2+ (t%betb-bet)**2)
       if (disttobase<dels/4) t%roundoff=.true.
     endif

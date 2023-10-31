@@ -80,15 +80,46 @@ SUBROUTINE comp_f_interpo(g,t)
   integer, parameter :: n=16
   integer :: ind1(n),ind2(n)
   real*8 :: alfa_value(n), beta_value(n),f_value(n)
-  real*8 :: hx,hy,alfb,betb
+  real*8 :: h,alfb,betb
   real*8 :: comp_value(9)
 
   alfb=t%alfb
   betb=t%betb
   i0=t%i0
   j0=t%j0
-  hx=g%hx
-  hy=g%hy
+  h=g%h
+!print*,'in compfinterp'
+!print*,alfb,i0, -pi+i0*h
+!print*,betb,i0, -pi/2+j0*h
+!print*,g%f1(i0,j0-2)
+!print*,g%f1(i0,j0-1)
+!print*,g%f1(i0,j0)
+!print*,g%f1(i0,j0+1)
+!print*,g%f1(i0,j0+2)
+!print*,g%f1(i0-2,j0)
+!print*,g%f1(i0-1,j0)
+!!print*,g%f1(i0,j0)
+!print*,g%f1(i0+1,j0)
+!print*,g%f1(i0+2,j0)
+!print*
+!print*,( g%f3(i0+1,j0+1) -g%f3(i0+1,j0-1) -g%f3(i0-1,j0+1) +g%f3(i0-1,j0-1) )/h**2/4 !11 derivative
+!print*,( g%f2(i0+1,j0) -g%f2(i0-1,j0) )/(2*h) !20 derivative
+!print*,( g%f2(i0+1,j0+1) -2*g%f2(i0+1,j0)+g%f2(i0+1,j0-1) &
+!- ( g%f2(i0-1,j0+1) -2*g%f2(i0-1,j0)+g%f2(i0-1,j0-1) ) )/(2*h**3) !21
+!print*,( g%f2(i0+2,j0) -2*g%f2(i0+1,j0)+g%f2(i0,j0) &
+!- ( g%f2(i0,j0) -2*g%f2(i0-1,j0)+g%f2(i0-2,j0) ) )/(2*h**3) !30 derivative
+!print*,g%f3der(i0,j0,4)
+!print*,g%f1(i0,j0)
+!print*,( g%f1(i0,j0+1) -2*g%f1(i0,j0)+g%f1(i0,j0-1) )/(h**2) !02 derivative
+!print*,( g%f1(i0+1,j0) -2*g%f1(i0,j0)+g%f1(i0-1,j0) )/(h**2) !20 derivative
+!print*
+!print*,g%f1der(i0,j0,5)
+!print*,g%f1der(i0,j0,3)
+!print*,g%f3der(i0,j0,2)
+!print*,g%f3der(i0,j0+1,2)
+!print*
+
+  h = g%h; 
 
 ! set i,j coordinates of 4x4 nbhd of i0,j0 (16 points)
   ind1(1) = i0-2;  ind1(5) = i0-1; ind1(9)  = i0; ind1(13) = i0+1;
@@ -103,8 +134,8 @@ SUBROUTINE comp_f_interpo(g,t)
 
 ! set alf,bet at those 16 points
   do k=1,16
-    alfa_value(k) = -pi   + ind1(k)*hx
-    beta_value(k) = -pi/2 + ind2(k)*hy
+    alfa_value(k) = -pi   + ind1(k)*h
+    beta_value(k) = -pi/2 + ind2(k)*h
   enddo
 
 ! INTERPOLATE ALL VALUES OF F1 TO BASEPOINT
