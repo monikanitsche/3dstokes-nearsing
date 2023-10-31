@@ -5,13 +5,13 @@ make driver.out
 #if $status exit
 cd ../../runs/ellip/
 #rm identcd02_1 identcd02_2 identcd02_3 identcd02_4 identcd02_5
-../../bld/ellip/driver.out < datin_patch1 > identcdm3_1
-../../bld/ellip/driver.out < datin_patch2 > identcdm3_2
-../../bld/ellip/driver.out < datin_patch3 > identcdm3_3
-../../bld/ellip/driver.out < datin_patch4 > identcdm3_4
-../../bld/ellip/driver.out < datin_patch5 > identcdm3_5
-../../bld/ellip/driver.out < datin_patch1n > identndm3_1
-../../bld/ellip/driver.out < datin_patch2n > identndm3_2
-../../bld/ellip/driver.out < datin_patch3n > identndm3_3
-../../bld/ellip/driver.out < datin_patch4n > identndm3_4
-../../bld/ellip/driver.out < datin_patch5n > identndm3_5
+../../bld/ellip/driver.out < datin_patch1 > identcd02_1
+#../../bld/ellip/driver.out < datin_patch2 > identcdm3_2
+#../../bld/ellip/driver.out < datin_patch3 > identcdm3_3
+#../../bld/ellip/driver.out < datin_patch4 > identcdm3_4
+#../../bld/ellip/driver.out < datin_patch5 > identcdm3_5
+#../../bld/ellip/driver.out < datin_patch1n > identndm3_1
+#../../bld/ellip/driver.out < datin_patch2n > identndm3_2
+#../../bld/ellip/driver.out < datin_patch3n > identndm3_3
+#../../bld/ellip/driver.out < datin_patch4n > identndm3_4
+#../../bld/ellip/driver.out < datin_patch5n > identndm3_5

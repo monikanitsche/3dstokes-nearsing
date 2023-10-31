@@ -154,10 +154,10 @@ xfar =10
 !print*,u(0,:)
 
 !do l=0,11
-do l=0,0
+do l=2,2
 !do l=11,11
   d=0.2d0/2**l
-d=1.6d0
+!d=1.6d0
   i2 = mod(l,10)
   i1 = (l - i2)/10
   write(dlab,'(a,2i1,a)')'d',i1,i2
