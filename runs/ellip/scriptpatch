@@ -1,0 +1,18 @@
+#!/bin/tcsh
+#echo 'hi monika'
+cd ../../bld/ellip/
+make driver.out
+#if $status exit
+cd ../../runs/ellip/
+#../../bld/ellip/driver.out < datin_patch1 > cosalf132040
+#../../bld/ellip/driver.out < datin_patch1 > calfplf132040
+../../bld/ellip/driver.out < datin_patch1 > identc321d02n040v
+../../bld/ellip/driver.out < datin_patch2 > identc321d02n080v
+../../bld/ellip/driver.out < datin_patch3 > identc321d02n160v
+../../bld/ellip/driver.out < datin_patch4 > identc321d02n320v
+#../../bld/ellip/driver.out < datin_patch5 > identc321d08n640v
+#../../bld/ellip/driver.out < datin_patch1 > alfbetgrid1
+#../../bld/ellip/driver.out < datin_patch2
+#../../bld/ellip/driver.out < datin_patch3
+#../../bld/ellip/driver.out < datin_patch4
+#../../bld/ellip/driver.out < datin_patch5 > piecesex
