@@ -10,7 +10,7 @@ VPATH = ../../src/common:../../src/ellipse
 
 include dependencies.mk
 
-OBJ= params.o types.o globalvars.o mod_stokes.o mod_SDLP.o mod_EHpqr.o mod_compcoeffdens.o mod_runge.o mod_products.o mod_geom.o mod_init.o mod_target.o runtime.o old.o
+OBJ= params.o types.o globalvars.o mod_stokes.o mod_SDLP.o mod_EHpqr.o mod_compcoeffdens.o mod_runge.o mod_products.o mod_geom.o mod_init.o mod_target.o runtime.o 
 
 OBJtest= params.o types.o globalvars.o mod_EHpqr.o mod_geom.o mod_stokes.o mod_products.o mod_compcoeffdens.o mod_SDLP.o
 

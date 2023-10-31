@@ -1,7 +1,7 @@
 types.o : params.o
 globalvars.o : types.o params.o
 
-old.o : params.o flags.h
+#old.o : params.o flags.h
 mod_stokes.o : flags.h params.o types.o globalvars.o mod_products.o mod_SDLP.o mod_compcoeffdens.o mod_EHpqr.o 
 mod_SDLP.o : types.o globalvars.o
 mod_runge.o : params.o globalvars.o mod_geom.o
