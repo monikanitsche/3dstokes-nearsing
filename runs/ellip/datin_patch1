@@ -1,0 +1,6 @@
+20 80 = m1,n1 (size of grid1)
+20 60 = m2,n2 (size of grid2)
+1 = correct
+2 = problem number (print velo on patch, various d)
+--- flend (*20)-----
+tmp
